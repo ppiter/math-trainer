@@ -12,23 +12,28 @@ import time
 import winsound
 
 #Preps
-VERSION = "0.100"
+VERSION = "0.102"
+
+def make_sound(type: bool, iterations, length):
+    if type: frequency = 2000
+    else: frequency = 500
+    for i in range(iterations):
+        winsound.Beep(frequency, length)
+        time.sleep(0.1/1000)
 
 ##Variables preps
 ##Create and init some variables for future use 
-""" questionsTotal = 0
-answersTotal = 0
-answersCorrect = 0
-timeSpent = 0
-timePenalty = 0
-averageTimeSpent = 0 """
+total_questions = 0
+correct_answers = 0
+winning_streak = 0
+loosing_streak = 0
 
 ##Init random
 random.seed()
 
 #SaiHai
 
-print("Hi!")
+print(f"Hi! This is multiplication table console interactive trainer v{VERSION}")
 
 while (True):
     # Generate random numbers
@@ -68,13 +73,15 @@ while (True):
     display_list[position_of_d - 1] = d
     display_list[position_of_e - 1] = e
 
+    total_questions += 1
     print(f"Сколько будет {a} умножить на {b}?")
     print(display_list)
     print(" 1 - 2 - 3")
 
-    inp = input("Набери номер правильного ответа и нажми Enter! ")
+    inp = input("Набери номер правильного ответа и нажми Enter. Набери q и нажми Enter для выхода.")
 
     if inp == "q":
+        print(f"Спасибо за игру! Я задал тебе {total_questions - 1} вопросов, правильных ответов было {correct_answers}!")
         break
 
     try:
@@ -88,10 +95,19 @@ while (True):
         continue
 
     if int(inp) == position_of_c:
-        print("Правильно!")
-        winsound.Beep(2000, 100)
-    elif int(inp) == position_of_d | int(inp) == position_of_e:
-        print("Неверный ответ!")
-        winsound.Beep(500, 500)
-    
+        correct_answers += 1
+        winning_streak += 1
+        loosing_streak = 0
+        print(f"Правильно! {a} умножить на {b} будет {c}. Это {winning_streak} правильный ответ подряд!")
+        make_sound(True, winning_streak, 50)
+    elif (int(inp) == position_of_d) | (int(inp) == position_of_e):
+        winning_streak = 0
+        loosing_streak += 1
+        print(f"Неверный ответ! {a} умножить на {b} будет {c}. Это {winning_streak} неправильный ответ подряд!")
+        make_sound(False, loosing_streak, 50)
+    else: 
+        print("Что-то пошло не так!")
+        winning_streak = 0
+        loosing_streak = 0
+
     print("=======================")
